@@ -25,19 +25,26 @@ def centroides_iguales(arr1, arr2):
 
 colores = ["red", "lawngreen", "darkorange", "darkgreen", "teal", "dodgerblue", "indigo"]
 
-# Conjunto de puntos de la formo [x, y, num_cluster], donde num_cluster es el numero de
+# Conjunto de puntos de la forma [x, y, num_cluster], donde num_cluster es el numero de
 # cluster al cual se encuentran más cerca
 puntos = [[random.randint(1, 100), random.randint(1, 100), 0] for _ in range(0, 100)]
 
 num_clusters = 5
 
 
-def clusterizar(puntos, num_clusters):
+def clusterizar(puntos, num_clusters: int, num_iteraciones=-1):
+    """
+    Clusteriza un conjunto de puntos.
+    :param puntos           Array de puntos a clusterizar, de la forma [float, float, int].
+    :param num_clusters     Número de clusters a crear.
+    :param num_iteraciones  Número máximo de iteraciones a realizar. Por defecto es -1,
+                            en cuyo caso no tiene límite.
+    """
 
     centroides_res = [puntos[random.randint(0, len(puntos) - 1)] for _ in range(num_clusters)]
     centroides = [[0.0, 0.0, 0] for _ in range(num_clusters)]
 
-    while not centroides_iguales(centroides, centroides_res):
+    while not centroides_iguales(centroides, centroides_res) and (num_iteraciones == -1 or num_iteraciones > 0):
 
         # Los centroides que se encuentran el el centro de los clusters.
         # Almacenan [x, y, num_elementos_del_cluster]
@@ -68,8 +75,11 @@ def clusterizar(puntos, num_clusters):
 
         # Calcular la posicion promedio de los centroides resultado
         for pos_cen_res, cen_res in enumerate(centroides_res):
-            centroides_res[pos_cen_res][0] = cen_res[0] / cen_res[2]
-            centroides_res[pos_cen_res][1] = cen_res[1] / cen_res[2]
+            centroides_res[pos_cen_res][0] = cen_res[0] / cen_res[2] if cen_res[2] != 0 else 0
+            centroides_res[pos_cen_res][1] = cen_res[1] / cen_res[2] if cen_res[2] != 0 else 0
+
+        if num_iteraciones != -1:
+            num_iteraciones -= 1
 
     # Graficar los puntos
     for pos_punto, punto in enumerate(puntos):
